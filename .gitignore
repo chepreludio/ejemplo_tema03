@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+dbs/
+excel/
+functpackages/
+*.duckdb
+*.duckdb.wal
+EXP_2025.csv
+EXP_2026.csv
+*.csv:Zone.Identifier
