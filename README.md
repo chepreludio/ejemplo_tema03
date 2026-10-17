@@ -4,8 +4,9 @@
 
 Dashboard ejecutivo e informe en Excel sobre las exportaciones de Brasil de sus cuatro
 principales productos agropecuarios: **Soja, Milho, Café en granos y Algodón**, a partir de
-los microdatos de exportación de los años **2025 y 2026 según el Gobierno Federal de Brasil 
-Ministério do Desenvolvimento, Indústria, Comércio e Serviços**.
+los datos de exportación de los años **2025 y 2026 según el Gobierno Federal de Brasil 
+Ministério do Desenvolvimento, Indústria, Comércio e Serviços 
+https://www.gov.br/mdic/pt-br/assuntos/comercio-exterior/estatisticas/base-de-dados-bruta**.
 
 ---
 
@@ -46,15 +47,15 @@ SG_UF_NCM, CO_VIA, CO_URF, QT_ESTAT, KG_LIQUIDO, VL_FOB`.
 
 ```
 .
-├── crear_excel.py            # Genera el libro Excel con pandas + openpyxl
-├── ejemplo_analisis_datos.xlsx  # Libro Excel resultante (6 hojas + tablas)
-├── dashboard.py              # Aplicación Streamlit (KPIs, gráficos y mapa)
-├── br_states.geojson         # Fronteras de los 27 estados (propiedad "sigla")
-├── requirements.txt          # Dependencias para el deploy
-├── .gitignore                # Excluye datos pesados (CSV de exportación, dbs/)
+├── crear_excel.py                # Genera el libro Excel con pandas + openpyxl (no se suben al repo)
+├── ejemplo_analisis_datos.xlsx   # Libro Excel resultante (6 hojas + tablas)
+├── dashboard.py                  # Aplicación Streamlit (KPIs, gráficos y mapa)
+├── br_states.geojson             # Fronteras de los 27 estados (propiedad "sigla")
+├── requirements.txt              # Dependencias para el deploy
+├── .gitignore                    # Excluye datos pesados (CSV de exportación, dbs/)
 ├── README.md
-├── EXP_2025.csv / EXP_2026.csv  (fuente, no se suben al repo)
-├── PAIS.csv / UF.csv            (fuente)
+├── EXP_2025.csv / EXP_2026.csv   (fuente, no se suben al repo)
+├── PAIS.csv / UF.csv             (fuente)
 ```
 
 ---
@@ -63,22 +64,23 @@ SG_UF_NCM, CO_VIA, CO_URF, QT_ESTAT, KG_LIQUIDO, VL_FOB`.
 
 ### Paso 1 — Crear el archivo Excel
 Se generó `ejemplo_analisis_datos.xlsx` con `crear_excel.py` usando **pandas** para la
-lectura/limpieza y **openpyxl** para escribir hojas, tablas y fórmulas.
+lectura/limpieza y **openpyxl** para escribir hojas, tablas y fórmulas, por ser parte
+de una ETL se descartar en el repositorio.
 
 ### Paso 2 — Pestaña `paises`
-`PAIS.csv` se cargó como tabla de Excel con nombre **`TablaPaises`** en la hoja `paises`.
+`PAIS.csv` se cargó como una hoja de Excel con nombre **`paises`**.
 
 ### Paso 3 — Pestaña `Base`
-Se filtraron las filas de `EXP_2025.csv` y `EXP_2026.csv` cuyo campo `CO_NCM` coincide con
+Se filtraron las filas de `EXP_2025.csv` y `EXP_2026.csv` cuyo campo clave `CO_NCM` coincide con
 los NCM del diccionario `productos`, generando **17.986 filas**. Cada fila se enriqueció con
 el nombre del producto. Columnas: `CO_ANO, CO_MES, CO_NCM, CO_PAIS, SG_UF_NCM, QT_ESTAT,
-KG_LIQUIDO, VL_FOB, Producto`.
+KG_LIQUIDO, VL_FOB, Producto`, son parte del original de la fuente de datos.
 
 ### Paso 4 — Relación para filtros interactivos
-La hoja `Base` es la tabla **`TablaBase`** y se relaciona con:
-- `TablaPaises` (por `CO_PAIS`)
-- `TablaProductos` (por `CO_NCM`, hoja `productos`)
-- `TablaEstados` (por `SG_UF_NCM`, hoja `estados`)
+La hoja `Base` es la tabla matriz y se relaciona con las hojas excel:
+- `paises` (por `CO_PAIS`)
+- `productos` (por `CO_NCM`)
+- `estados` (por `SG_UF_NCM`)
 
 Estas relaciones permiten filtrar/segmentar por producto, país y estado/región.
 
@@ -122,12 +124,12 @@ País líder, Participación 2026 y Variación 2026 vs 2025.
 - **Volumen total:** 278.057.290.879 kg
 - **Países destino:** 155
 
-| Producto | Valor FOB (US$) |
-|---|---:|
-| Soja | 86.431.550.289 |
-| Café en granos | 24.029.770.065 |
-| Milho | 13.009.528.766 |
-| Algodón | 8.498.603.831 |
+| Producto        | Valor FOB (US$) |
+|-----------------|-----------------|
+| Soja            | 86.431.550.289  |
+| Café en granos  | 24.029.770.065  |
+| Milho           | 13.009.528.766  |
+| Algodón         | 8.498.603.831   |
 
 **Regiones de origen (Valor FOB):** Centro Oeste (US$ 55.558 M), Sudeste (33.788 M),
 Sur (18.237 M), Nordeste (13.244 M), Norte (10.067 M).
@@ -152,7 +154,7 @@ se calculan al abrirlo en Excel.
 
 ---
 
-## 7. Ejecución local
+## 7. Ejecución local en Windows (DOS o PowerShell)
 
 ```bash
 # 1. Crear entorno e instalar dependencias
@@ -167,7 +169,7 @@ python crear_excel.py
 streamlit run dashboard.py
 ```
 
-El dashboard abre en `http://localhost:8501`.
+El dashboard abre en tu navegador en el url `http://localhost:8501`.
 
 ---
 

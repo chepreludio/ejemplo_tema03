@@ -1,9 +1,15 @@
+###App elaborada con fines didáctico en el framework de python
+###streamlit url:https://streamlit.io/
+###en su versíón Free
+###Su página de componentes y ejemplos: https://streamlit.io/components
+###Librerias necesarias para el funcionamiento adecuado de la app
+###estan respaldadas en el arcivo de instalación requirements.txt
 import json
-
 import pandas as pd
 import streamlit as st
 import plotly.express as px
 
+###Variables de configuración
 EXCEL = "ejemplo_analisis_datos.xlsx"
 GEOJSON = "br_states.geojson"
 TITULO = "Exportaciones Brasileñas de los 4 Principales Productos Agro"
@@ -15,9 +21,11 @@ AMARILLO = "#FFDF00"
 AZUL = "#1F3A93"
 COLORES = [ROJO, VERDE, AZUL, AMARILLO]
 
+###Confiruración general del dashboard
 st.set_page_config(page_title=TITULO, page_icon="🌱", layout="wide")
 
 
+###Carga de todos los datos establecidos para llenar los controles del dashboard
 @st.cache_data(show_spinner="Cargando información...")
 def cargar_datos():
     prod = pd.read_excel(EXCEL, sheet_name="productos", dtype={"NCM": str})
@@ -54,10 +62,12 @@ def cargar_datos():
     return base
 
 
+###Formatea los números a los decimales e unidades de mil latino
 def formato_num(x):
     return f"{x:,.0f}".replace(",", ".")
 
 
+###Formatea los datos de las KPIs en largura, número de decimales entre otros
 def formato_fob(x):
     if x >= 1e9:
         return f"US$ {x/1e9:,.2f} mil millones".replace(",", "X").replace(".", ",").replace("X", ".")
@@ -65,13 +75,14 @@ def formato_fob(x):
         return f"US$ {x/1e6:,.1f} millones".replace(",", "X").replace(".", ",").replace("X", ".")
     return f"US$ {x:,.0f}".replace(",", ".")
 
-
+###Función que cargo las fuentes de datos al dashboard
 df = cargar_datos()
 
 st.title(f"🌱 {TITULO}")
 st.caption(SUBTITULO)
 
-# ---------------- Filtros interactivos ----------------
+###Filtros interactivos 
+###Submenú desplegrable con sus respectivas variables
 with st.sidebar:
     st.header("Filtros interactivos")
     productos_sel = st.multiselect(
@@ -101,7 +112,7 @@ if f.empty:
     st.warning("No hay datos para los filtros seleccionados.")
     st.stop()
 
-# ---------------- KPIs ----------------
+###Visualizador de los valores de las KPIs en estudio
 total_fob = f["VL_FOB"].sum()
 total_kg = f["KG_LIQUIDO"].sum()
 n_paises = f["Pais"].nunique()
@@ -128,7 +139,7 @@ k8.metric("Variación 2026 vs 2025", f"{crecimiento:+.1f}%")
 
 st.markdown("---")
 
-# ---------------- Gráficos ----------------
+###Representación de los valores en Gráficos interactivos
 col1, col2 = st.columns(2)
 
 with col1:
@@ -182,7 +193,7 @@ fig = px.treemap(g_top, path=["Producto", "Pais"], values="VL_FOB",
 fig.update_layout(margin=dict(t=20, l=10, r=10, b=10))
 st.plotly_chart(fig, use_container_width=True)
 
-# ---------------- Mapa por estado de Brasil ----------------
+###Mapa por estados de Brasil
 st.markdown("---")
 st.subheader("Origen de las exportaciones por estado de Brasil")
 
